@@ -40,8 +40,11 @@ class BaseModel():
 
     def __str__(self):
         """Returns a string representation of the instance"""
-        return '[{}] ({}) {}'.format(
-                type(self).__name__, self.id, self.__dict__)
+        cls = (str(type(self)).split('.')[-1]).split('\'')[0]
+        dictionary = self.__dict__
+        if '_sa_instance_state' in dictionary:
+            del dictionary['_sa_instance_state']
+        return '[{}] ({}) {}'.format(cls, self.id, dictionary)
 
     def __repr__(self):
         """return a string representation
