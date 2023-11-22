@@ -2,6 +2,7 @@
 """ Console Module """
 import cmd
 import sys
+import sqlalchemy
 from datetime import datetime
 from models.base_model import BaseModel
 from models.__init__ import storage
@@ -143,9 +144,6 @@ class HBNBCommand(cmd.Cmd):
 
             key, value = key_value
 
-            # Replace underscores with spaces in the key
-            key = key.replace('_', ' ')
-
             # Check for string values enclosed in double quotes
             if value.startswith('"') and value.endswith('"'):
                 # Remove double quotes and replace escaped characters
@@ -251,11 +249,13 @@ class HBNBCommand(cmd.Cmd):
             if args not in HBNBCommand.classes:
                 print("** class doesn't exist **")
                 return
-            for k, v in storage._FileStorage__objects.items():
+
+            objects_dict = storage.all(args)
+            for k, v in objects_dict.items():
                 if k.split('.')[0] == args:
                     print_list.append(str(v))
         else:
-            for k, v in storage._FileStorage__objects.items():
+            for k, v in storage.all().items():
                 print_list.append(str(v))
 
         print(print_list)
