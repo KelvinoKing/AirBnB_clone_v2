@@ -1,9 +1,16 @@
 #!/usr/bin/python3
 """ Place Module for HBNB project """
-from sqlalchemy import Column, String, Integer, Float, ForeignKey
+from sqlalchemy import Column, String, Table, Integer, Float, ForeignKey
 from models.base_model import BaseModel, Base
 from sqlalchemy.orm import relationship
 from os import getenv
+
+place_amenity = Table('place_amenity', Base.metadata, Column(
+    'place_id', String(60), ForeignKey(
+        'places.id'), primary_key=True, nullable=False),
+    Column('amenity_id', String(60), ForeignKey(
+        'amenities.id'), primary_key=True, nullable=False)
+        )
 
 
 class Place(BaseModel, Base):
@@ -25,9 +32,26 @@ class Place(BaseModel, Base):
     if getenv('HBNB_TYPE_STORAGE') == 'db':
         reviews = relationship(
                 'Review', backref='place', cascade='all, delete-orphan')
+        amenities = relationship(
+                'Amenity', secondary=place_amenity, viewonly=False)
 
     @property
     def review(self):
         from models import storage
         return [review for review in storage.all(
             "Review").values() if review.place_id == self.id]
+
+    @property
+    def amenities(self):
+        from models import storage
+        return [storage.get('Amenity', amenity_id) for amenity_id in getattr(
+            self, 'amenity_ids', [])]
+
+    @amenities.setter
+    def amenities(self, amenity):
+        if isinstance(amenity, Amenity):
+            amenity_ids = getattr(self, 'amenity_ids', [])
+            if amenity_id not in amenity_ids:
+                amenity_ids.append(amenity_id)
+                self.amenity_ids = amenity_ids
+                self.save()
