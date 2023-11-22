@@ -29,8 +29,8 @@ class DBStorage:
         env = getenv('HBNB_ENV')
 
         self.__engine = create_engine(
-                'mysql+mysqldb://{}:{}@{}/{}'.format(user, pwd, host, db),
-                pool_pre_ping=True)
+            'mysql+mysqldb://{}:{}@{}/{}'.format(user, pwd, host, db),
+            pool_pre_ping=True)
 
         if env == 'test':
             Base.metadata.drop_all(self.__engine)
@@ -80,5 +80,5 @@ class DBStorage:
         """
         Base.metadata.create_all(self.__engine)
         session_factory = sessionmaker(
-                bind=self.__engine, expire_on_commit=False)
+            bind=self.__engine, expire_on_commit=False)
         self.__session = scoped_session(session_factory)
