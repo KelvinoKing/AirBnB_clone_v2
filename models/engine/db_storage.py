@@ -35,7 +35,6 @@ class DBStorage:
         if env == 'test':
             Base.metadata.drop_all(self.__engine)
 
-
     def all(self, cls=None):
         """Query on the current database session
         """
@@ -82,4 +81,4 @@ class DBStorage:
         Base.metadata.create_all(self.__engine)
         session_factory = sessionmaker(
                 bind=self.__engine, expire_on_commit=False)
-        DBStorage.__session = scoped_session(session_factory)
+        self.__session = scoped_session(session_factory)
