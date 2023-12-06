@@ -18,7 +18,7 @@ def do_pack():
         # Creates version folder if does not exist
         local('mkdir -p versions')
 
-        # Generate name file 
+        # Generate name file
         # web_static_<year><month><day><hour><minute><second>.tgz
         my_time = datetime.utcnow()
         file_name = "web_static_{}{}{}{}{}{}.tgz".format(
