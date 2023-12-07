@@ -46,9 +46,6 @@ def do_deploy(archive_path):
         run('rm -rf {}'.format(current_link))
         run('ln -s {} {}'.format(release_path, current_link))
 
-        # Restart Nginx
-        run('sudo service nginx restart')
-
         print("New version deployed!")
         return True
 
