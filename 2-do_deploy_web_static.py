@@ -32,14 +32,14 @@ def do_deploy(archive_path):
         run('mkdir -p {}'.format(release_path))
         run('tar -xzf /tmp/{} -C {}'.format(archive_filename, release_path))
 
+        # Delete the archive from the web server
+        run('rm /tmp/{}'.format(archive_filename))
+
         # Move contente to the correct location
-        run('mv {}/web_static/* {}'.format(release_path, release_path))
+        run('mv -n {}/web_static/* {}'.format(release_path, release_path))
 
         # Remove unnecessary directory
         run('rm -rf {}/web_static'.format(release_path))
-
-        # Delete the archive from the web server
-        run('rm /tmp/{}'.format(archive_filename))
 
         # Create a new symbolic link and delete the old one
         current_link = '/data/web_static/current'
