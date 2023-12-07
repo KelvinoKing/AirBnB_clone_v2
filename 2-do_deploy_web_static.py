@@ -35,19 +35,10 @@ def do_deploy(archive_path):
         # Delete the archive from the web server
         run('rm /tmp/{}'.format(archive_filename))
 
-        # Move contente to the correct location
-        run('mv -n {}/web_static/* {}'.format(release_path, release_path))
-
-        # Remove unnecessary directory
-        run('rm -rf {}/web_static'.format(release_path))
-
         # Create a new symbolic link and delete the old one
         current_link = '/data/web_static/current'
-        run('rm -rf {}'.format(current_link))
+        run('rm -f {}'.format(current_link))
         run('ln -s {} {}'.format(release_path, current_link))
-
-        # Restart Nginx
-        run('sudo service nginx restart')
 
         print("New version deployed!")
         return True
