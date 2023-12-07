@@ -33,7 +33,7 @@ def do_deploy(archive_path):
         run('mkdir -p {}'.format(folder_name))
         run('tar -xzf /tmp/{} -C {}'.format(file_name, folder_name))
 
-        #Delete the archive from web server
+        # Delete the archive from web server
         run('rm /tmp/{}'.format(file_name))
 
         # Delete the symbolic link of /data/web_static/current
@@ -41,7 +41,6 @@ def do_deploy(archive_path):
         run('rm -f /data/web_static/current')
         run('ln -s {} /data/web_static/current'.format(folder_name))
 
-        print("New version deployed!")
         return True
 
     except Exception as e:
