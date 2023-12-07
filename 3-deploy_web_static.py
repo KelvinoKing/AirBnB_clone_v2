@@ -28,12 +28,12 @@ def do_pack():
     file_name = "web_static_{}{}{}{}{}{}.tgz".format(
             my_time.year, my_time.month, my_time.day, my_time.hour,
             my_time.minute, my_time.second)
-    file_path = f"version/{file_name}"
+    file_path = f"versions/{file_name}"
 
     # Create the archive
     if local('tar -cvzf {} web_static'.format(file_path)).failed is True:
         return None
-    
+
     # Return the archive path
     return file_path
 
