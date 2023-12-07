@@ -3,20 +3,10 @@
 """
 from fabric.api import run, put, env
 import os
-import sys
 
-
-if len(sys.argv) > 1:
-    args = sys.argv[1:]
-    for i in range(len(args)):
-        if args[i] == '-i' and i + 1 < len(args):
-            env.key_filename = args[i + 1]
-        elif args[i] == '-u' and i + 1 < len(args):
-            env.user = args[i + 1]
-else:
-    env.user = 'ubuntu'
 
 env.hosts = ['52.200.50.96', '52.201.160.72']
+env.user = 'ubuntu'
 
 
 def do_deploy(archive_path):
