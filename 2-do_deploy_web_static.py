@@ -28,37 +28,53 @@ def do_deploy(archive_path):
     Returns:
         bool: True if all operations are done rght else false
     """
-    if not os.path.exists(archive_path):
+    if os.path.isfile(archive_path) is False:
         return False
 
-    try:
-        # Upload the archive to /tmp/ dir on the web server
-        put(archive_path, "/tmp/")
+    # Upload the archive to /tmp/ dir on the web server
+    # Uncompress the archive to /data/web_static/releases/<filename
+    # without extension> on the web server
+    filename = archive_path.split("/")[-1]
+    name = filename.split(".")[0]
 
-        # Uncompress the archive to /data/web_static/releases/<filename
-        # without extension> on the web server
-        archive_filename = os.path.basename(archive_path)
-        release_path = "/data/web_static/releases/{}".format(
-                archive_filename.split('.')[0])
-        run('mkdir -p {}'.format(release_path))
-        run('tar -xzf /tmp/{} -C {}'.format(archive_filename, release_path))
-
-        # Move contente to the correct location
-        run('mv -n {}/web_static/* {}'.format(release_path, release_path))
-
-        # Remove unnecessary directory
-        run('rm -rf {}/web_static'.format(release_path))
-
-        # Delete the archive from the web server
-        run('rm /tmp/{}'.format(archive_filename))
-
-        # Create a new symbolic link and delete the old one
-        current_link = '/data/web_static/current'
-        run('rm -rf {}'.format(current_link))
-        run('ln -s {} {}'.format(release_path, current_link))
-
-        print("New version deployed!")
-        return True
-
-    except Exception as e:
+    if put(archive_path, "/tmp/{}".format(filename)).failed is True:
         return False
+
+    release_path = "/data/web_static/releases/{}".format(name)
+
+    if run('rm -rf {}'.format(release_path)).failed is True:
+        return False
+
+    if run('mkdir -p {}'.format(release_path)).failed is True:
+        return False
+
+    if run('tar -xzf /tmp/{} -C /data/web_static/releases/{}/'.
+            format(filename, name)).failed is True:
+        return False
+
+    # Delete the archive
+    if run('rm /tmp/{}'.format(filename)).failed is True:
+        return False
+
+    # Move content to the correct location
+    if run('mv /data/web_static/releases/{}/web_static/* \
+            /data/web_static/releases/{}/'.format(name, name)).failed is True:
+        return False
+
+    # Remove unnecessary directory
+    run('rm -rf {}/web_static'.format(release_path))
+
+    # Create a new symbolic link and delete the old one
+    if run('rm -rf /dat/web_static/releases/{}/web_static'.
+            format(name)).failed is True:
+        return False
+
+    if run('rm -rf /data/web_static/current').failed is True:
+        return False
+
+    if run('ln -s /{}/ /data/web_static/current'.
+            format(release_path)).failed is True:
+        return False
+
+    print("New version deployed!")
+    return True
