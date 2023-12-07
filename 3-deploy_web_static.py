@@ -18,25 +18,24 @@ def do_pack():
         str: return the archive path if the archive has been
              correctly generated. Otherwise, it should return None
     """
-    try:
-        # Creates version folder if does not exist
-        local('mkdir -p versions')
-
-        # Generate name file
-        # web_static_<year><month><day><hour><minute><second>.tgz
-        my_time = datetime.utcnow()
-        file_name = "web_static_{}{}{}{}{}{}.tgz".format(
-                my_time.year, my_time.month, my_time.day, my_time.hour,
-                my_time.minute, my_time.second)
-
-        # Create the archive
-        local('tar -cvzf versions/{} web_static'.format(file_name))
-
-        # Return the archive path
-        return os.path.join("version", file_name)
-
-    except Exception as e:
+    # Creates version folder if does not exist
+    if local('mkdir -p versions').failed is True:
         return None
+
+    # Generate name file
+    # web_static_<year><month><day><hour><minute><second>.tgz
+    my_time = datetime.utcnow()
+    file_name = "web_static_{}{}{}{}{}{}.tgz".format(
+            my_time.year, my_time.month, my_time.day, my_time.hour,
+            my_time.minute, my_time.second)
+    file_path = f"version/{file_name}"
+
+    # Create the archive
+    if local('tar -cvzf {} web_static'.format(file_path)).failed is True:
+        return None
+    
+    # Return the archive path
+    return file_path
 
 
 def do_deploy(archive_path):
@@ -103,7 +102,7 @@ def do_deploy(archive_path):
 def deploy():
     """Creates and distributes an archive to your web servers
     """
-    filename = do_pack()
-    if filename is None:
+    filepath = do_pack()
+    if filepath is None:
         return False
-    return do_deploy(filename)
+    return do_deploy(filepath)
