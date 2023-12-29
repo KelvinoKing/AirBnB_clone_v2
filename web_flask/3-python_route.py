@@ -30,12 +30,10 @@ def c_text(text):
 
 
 @app.route("/python/<text>", strict_slashes=False)
-def python(text=None):
+@app.route("/python/", strict_slashes=False)
+def python(text="is cool"):
     """the python page
     """
-    if text is None:
-        text = "is cool"
-
     text = text.replace("_", " ")
     return "Python " + text
 
