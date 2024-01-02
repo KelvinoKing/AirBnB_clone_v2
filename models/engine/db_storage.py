@@ -78,16 +78,13 @@ class DBStorage:
         """Create all tables in the database and create the current
         database session
         """
-        if self.__session is not None:
-            self.__session.commit()
-
         Base.metadata.create_all(self.__engine)
         session_factory = sessionmaker(
             bind=self.__engine, expire_on_commit=False)
         Session = scoped_session(session_factory)
-        self.__session = Session()
+        self.__session = Session
 
     def close(self):
         """calls remove() mothod on the private session attribute
         """
-        self.__session.close()
+        self.__session.remove()
