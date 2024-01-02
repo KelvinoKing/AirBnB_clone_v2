@@ -36,7 +36,7 @@ class DBStorage:
             Base.metadata.drop_all(self.__engine)
 
     def all(self, cls=None):
-        """Query on the current database session
+        """Query on the current databases session
         """
         classes = [User, State, City, Amenity, Place, Review]
         result_dict = {}
